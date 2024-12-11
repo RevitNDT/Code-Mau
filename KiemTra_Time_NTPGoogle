@@ -1,0 +1,35 @@
+import ntplib
+from time import ctime
+from datetime import datetime
+
+def check_year():
+    try:
+        # Kết nối tới máy chủ NTP Google
+        client = ntplib.NTPClient()
+        response = client.request('time.google.com')
+
+        # Kiểm tra nếu máy chủ NTP phản hồi đúng
+        if response is None:
+            print("Không nhận được phản hồi từ máy chủ NTP.")
+            return False
+
+        # Lấy thời gian hiện tại từ máy chủ
+        current_time = ctime(response.tx_time)
+
+        # In thời gian nhận được từ máy chủ NTP để kiểm tra
+        print(f"Thời gian nhận được từ NTP: {current_time}")
+
+        # Chuyển đổi thời gian thành đối tượng datetime
+        current_year = datetime.strptime(current_time, '%a %b %d %H:%M:%S %Y').year
+
+        # Kiểm tra nếu năm hiện tại có nhỏ hơn 2026
+        if current_year < 2026:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print("Error fetching time:", str(e))
+        return False
+
+# Kiểm tra và in kết quả
+print(check_year())
